@@ -109,6 +109,11 @@ func newConfig() *config {
 			description: "Inspects the named Pokémon if was already captured",
 			callback:    commandInspect,
 		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "Lists all captured Pokémons",
+			callback:    commandPokedex,
+		},
 	}
 
 	u, err := buildURL(LOCATION_AREAS_PATH, 0)
@@ -206,7 +211,7 @@ func commandExplore(cfg *config, args ...string) error {
 	fmt.Printf("Exploring %s...\n", args[0])
 	fmt.Println("Found Pokémon:")
 	for _, encounter := range getLocationArea.PokemonEncounters {
-		fmt.Println(" -", encounter.Pokemon.Name)
+		fmt.Println("  -", encounter.Pokemon.Name)
 	}
 
 	return nil
@@ -237,6 +242,7 @@ func commandCatch(cfg *config, args ...string) error {
 	if roll > threshold {
 		cfg.pokemons[pokemon.Name] = pokemon
 		fmt.Printf("%s was caught!\n", pokemon.Name)
+		fmt.Println("You may now inspect it with the inspect command.")
 	} else {
 		fmt.Printf("%s escaped!\n", pokemon.Name)
 	}
@@ -267,6 +273,15 @@ func commandInspect(cfg *config, args ...string) error {
 	fmt.Println("Types:")
 	for _, typ := range pokemon.Types {
 		fmt.Printf("  - %s\n", typ.Type.Name)
+	}
+
+	return nil
+}
+
+func commandPokedex(cfg *config, args ...string) error {
+	fmt.Println("Your Pokedex:")
+	for _, pokemon := range cfg.pokemons {
+		fmt.Printf("  - %s\n", pokemon.Name)
 	}
 
 	return nil
